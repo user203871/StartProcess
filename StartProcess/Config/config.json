@@ -1,0 +1,9 @@
+{
+    "sourceProcess": "D:\\Games\\snes9x\\snes9x-x64.exe",
+    "sourceFiles": "C:\\Temp\\dir",
+    "logFile": "C:\\Temp\\log.txt",
+    "screenPositionX": 0,
+    "screenPositionY": 0,
+    "windowWidth": 500,
+    "windowHeight": 500
+}
