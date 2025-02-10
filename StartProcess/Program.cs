@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using StartProcess.Extensions;
 using StartProcess.Logging;
 using StartProcess.Config;
 using System.Diagnostics;
@@ -21,61 +22,97 @@ namespace StartProcess
             var config =
                 Configure.Json();
 
-            try 
-            {
-                Terminate.ExistingProcess(
-                    config);
+            var i = 
+                0;
 
-                var fileToProcess =
-                    RandomData.File(
+            while (config.ExecutionLoops > i) 
+            {
+                i++;
+
+                try
+                {
+                    Logger.Log(
                         config.LogFile,
-                        config.SourceFiles);
+                        Ext.Separator);
 
-                var startInfo =
-                    new ProcessStartInfo
-                    {
-                        CreateNoWindow = true,
-                        UseShellExecute = true,
-                        Arguments = fileToProcess + " -hidemenu",
-                        FileName = config.SourceProcess,
-                        WindowStyle = ProcessWindowStyle.Normal
-                    };
+                    Logger.Log(
+                        config.LogFile,
+                        Ext.Separator);
 
-                Logger.Log(
-                    config.LogFile,
-                    "Running process: " + 
-                    config.SourceProcess);
+                    Terminate.ExistingProcess(
+                        config);
 
-                Logger.Log(
-                    config.LogFile,
-                    "Running file: " + 
-                    fileToProcess);
+                    var fileToProcess =
+                        RandomData.File(config);
 
-                var processRun =
-                    Process.Start(
-                        startInfo);
+                    var startInfo =
+                        new ProcessStartInfo
+                        {
+                            CreateNoWindow = true,
+                            UseShellExecute = true,
+                            Arguments = "\"" + fileToProcess + "\"" + " " + config.Arguments,
+                            FileName = config.SourceProcess,
+                            WindowStyle = ProcessWindowStyle.Normal
+                        };
 
-                Thread.Sleep(100);
+                    Logger.Log(
+                        config.LogFile,
+                        "Running process: " +
+                        config.SourceProcess);
 
-                var id =
-                    processRun!.MainWindowHandle;
+                    Logger.Log(
+                        config.LogFile,
+                        "Running file: " +
+                        fileToProcess);
 
-                MoveWindow(
-                    processRun.MainWindowHandle,
-                    config.ScreenPositionX,
-                    config.ScreenPositionY,
-                    config.WindowWidth,
-                    config.WindowHeight,
-                    true);
-            } 
-            catch (Exception ex)
-            {
-                Logger.Log(
-                    config.LogFile,
-                    ex.Message);
+                    Logger.Log(
+                        config.LogFile,
+                        "Execution count: " +
+                        i + 
+                        " of " +
+                        config.ExecutionLoops);
 
-                throw;
-            }           
+                    var processRun =
+                        Process.Start(
+                            startInfo);
+
+                    Thread.Sleep(1000);
+
+                    var id =
+                        processRun!.MainWindowHandle;
+
+                    MoveWindow(
+                        processRun.MainWindowHandle,
+                        config.ScreenPositionX,
+                        config.ScreenPositionY,
+                        config.WindowWidth,
+                        config.WindowHeight,
+                        true);
+
+                    Thread.Sleep(
+                        config.ExecutionSeconds * 
+                        1000);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(
+                        config.LogFile,
+                        ex.Message);
+                    throw;
+                }
+            }
+
+            Logger.Log(
+                config.LogFile,
+                Ext.Separator);
+
+            Logger.Log(
+                config.LogFile,
+                Ext.Separator);
+
+            Logger.Log(
+                config.LogFile,
+                "Runs complete, exiting...");
         }
     }
 }

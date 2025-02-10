@@ -1,13 +1,13 @@
 ﻿using StartProcess.Extensions;
 using StartProcess.Logging;
+using StartProcess.Config;
 
 namespace StartProcess
 {
     public static class RandomData
     {
         public static string File(
-            string logFile,
-            string directory)
+            Configuration config)
         {
             try
             {
@@ -15,22 +15,20 @@ namespace StartProcess
                     new Random();
 
                 return Random.Shared.GetItems(
-                    Files(logFile, directory).
+                    Files(config).
                     ToArray(), 1)[0];
             }
             catch (Exception ex)
             {
                 Logger.Log(
-                    logFile, 
+                    config.LogFile, 
                     ex.Message);
-
                 throw;
             }
         }
 
         public static List<string> Files(
-            string logFile,
-            string directory) 
+            Configuration config) 
         {
             try
             {
@@ -40,20 +38,33 @@ namespace StartProcess
                 var listOfFiles =
                     new List<string>(
                         Directory.GetFiles(
-                            directory));
+                            config.SourceFiles));
 
-                filteredList.AddRange(from file in listOfFiles
-                                      where !file.ToUpper().HasNoCase("frz")
-                                      select file);
+                foreach (var file in listOfFiles) 
+                {
+                    var addFlag = true;
+
+                    foreach (var type in config.ExcludedFileTypes) 
+                    {
+                        if (file.ToUpper().HasNoCase(type.ToString()))
+                        {                        
+                            addFlag = false;
+                        }
+                    }
+
+                    if (addFlag) 
+                    {
+                        filteredList.Add(file);
+                    }
+                }
 
                 return filteredList;
             } 
             catch (Exception ex)
             {
                 Logger.Log(
-                    logFile,
+                    config.LogFile,
                     ex.Message);
-
                 throw;
             }
         }

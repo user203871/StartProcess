@@ -1,4 +1,6 @@
-﻿namespace StartProcess.Logging
+﻿using StartProcess.Extensions;
+
+namespace StartProcess.Logging
 {
     public static class Logger
     {
@@ -7,7 +9,7 @@
             string logData)
         {
             Console.WriteLine(
-                logData);
+                logData.Timestamp());
 
             Write(logFile, logData);
         }
@@ -22,10 +24,7 @@
                 File.AppendText(logFile);
 
             log.WriteLine(
-                logData +
-                DateTime.Now.ToShortDateString() +
-                " " +
-                DateTime.Now.ToShortTimeString());
+                logData.Timestamp());
 
             log.Close();
         }

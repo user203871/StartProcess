@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using StartProcess.Extensions;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
 namespace StartProcess.Config
 {
     public static class Configure
     {
-        public static ConfigurationRecord Json() 
+        public static Configuration Json() 
         {
             try 
             {
@@ -17,12 +18,12 @@ namespace StartProcess.Config
                     configurationFile)) 
                 {
                     Console.WriteLine(
-                        "Error: config file not found...");
+                        "Error: config file not found...".Timestamp());
 
                     throw new FileNotFoundException();
                 }
 
-                return JsonConvert.DeserializeObject<ConfigurationRecord>(
+                return JsonConvert.DeserializeObject<Configuration>(
                     JObject.Parse(
                         File.ReadAllText(
                             configurationFile)).

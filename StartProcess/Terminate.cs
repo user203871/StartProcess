@@ -8,7 +8,7 @@ namespace StartProcess
     public static class Terminate
     {
         public static void ExistingProcess(
-            ConfigurationRecord config) 
+            Configuration config) 
         {
             try 
             {
@@ -32,16 +32,20 @@ namespace StartProcess
                     Process.GetProcessesByName(
                         processName);
 
-                Logger.Log(
-                    config.LogFile,
-                    "Terminating process: " +
-                    processName);
 
-                foreach (var worker in runningProcess)
+                if (runningProcess.Length > 0) 
                 {
-                    worker.Kill();
-                    worker.WaitForExit();
-                    worker.Dispose();
+                    Logger.Log(
+                        config.LogFile,
+                        "Terminating process: " +
+                        processName);
+
+                    foreach (var worker in runningProcess)
+                    {
+                        worker.Kill();
+                        worker.WaitForExit();
+                        worker.Dispose();
+                    }
                 }
             } 
             catch (Exception ex)

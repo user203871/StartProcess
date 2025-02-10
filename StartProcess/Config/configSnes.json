@@ -6,7 +6,7 @@
         "txt",
         "ps1"
     ],
-    "logFile": "C:\\Temp\\log.txt",
+    "logFile": "C:\\Temp\\startProcessSnesLog.txt",
     "screenPositionX": 0,
     "screenPositionY": 0,
     "windowWidth": 500,
